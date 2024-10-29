@@ -16,7 +16,7 @@ from collections import Counter
 #%matplotlib inline
 
 #Reading the train.csv by removing the last colum since it is empty
-DATA_PATH = "/Users/taylorsmith/Coding/Intermediate programing grade 10/Data science project/Training.csv"
+DATA_PATH = "C:/Users/SAAS_User/Documents/Code/Machine-Learning-for-disease-finding/Training.csv"
 data = pd.read_csv(DATA_PATH).dropna(axis = 1)
 
 #check if the data set is balanced
@@ -62,6 +62,7 @@ print(f"Accuracy on train data by SVM Classifier\
 
 print(f"Accuracy on test data by SVM Classifier\
     : {accuracy_score(y_test, preds)*100}")
+
 cf_matrix = confusion_matrix(y_test, preds)
 plt.figure(figsize=(12,8))
 sns.heatmap(cf_matrix, annot=True)
@@ -105,7 +106,7 @@ final_nb_model.fit(X, y)
 final_rf_model.fit(X, y)
 
 #Reading the test data
-test_data = pd.read_csv("/Users/taylorsmith/Coding/Intermediate programing grade 10/Data science project/Testing.csv").dropna(axis=1)
+test_data = pd.read_csv("/Users/SAAS_User/Documents/Code/Machine-Learning-for-disease-finding/Testing.csv").dropna(axis=1)
 
 test_X = test_data.iloc[:, :-1]
 test_Y = encoder.transform(test_data.iloc[:, -1])
@@ -127,21 +128,20 @@ from scipy import stats
 final_preds = [Counter([i,j,k]).most_common(1)[0][0] for i,k,j in zip(svm_preds, nb_preds, rf_preds)]
 final_preds = np.array(final_preds)
 
-print(f"Accuracy on Test dataset by the combined model: {accuracy_score(test_Y, final_preds)*100}")
-
-# actual_answers = np.array([np.str_(elem) for elem in test_data.iloc[:, -1]])
-
 actual_answers = test_data.iloc[:, -1]
-new_final_preds = []
-for elem in final_preds:
-    print(str(elem.tobytes()))
 
-cf_matrix = confusion_matrix(new_final_preds, final_preds.tolist())
+actual_answers = [str(elem) for elem in actual_answers.tolist()]
+final_preds = [str(elem) for elem in final_preds.tolist()]
+
+accuracy = accuracy_score(actual_answers, final_preds)*100
+print(f"Accuracy on Test dataset by the combined model\
+       : {accuracy}")
+cf_matrix = confusion_matrix(actual_answers, final_preds)
 plt.figure(figsize=(12,8))
 
 sns.heatmap(cf_matrix, annot=True)
 plt.title("Confusion Matrix for Combined Model on Test Dataset")
-plt.show
+plt.show()
 
 #Producing cross validation score for the models
 for model_name in models:
